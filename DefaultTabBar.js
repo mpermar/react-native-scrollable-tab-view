@@ -9,11 +9,14 @@ const {
   Animated,
 } = ReactNative;
 const Button = require('./Button');
+import { strings } from '../../locales/i18n';
+import MaterialIcon from '../react-native-vector-icons/MaterialIcons';
 
 const DefaultTabBar = createReactClass({
   propTypes: {
     goToPage: PropTypes.func,
     activeTab: PropTypes.number,
+    icons: PropTypes.object,
     tabs: PropTypes.array,
     backgroundColor: PropTypes.string,
     activeTextColor: PropTypes.string,
@@ -35,7 +38,7 @@ const DefaultTabBar = createReactClass({
   renderTabOption(name, page) {
   },
 
-  renderTab(name, page, isTabActive, onPressHandler) {
+  renderTab(icon, name, page, isTabActive, onPressHandler) {
     const { activeTextColor, inactiveTextColor, textStyle, } = this.props;
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;
     const fontWeight = isTabActive ? 'bold' : 'normal';
@@ -49,8 +52,9 @@ const DefaultTabBar = createReactClass({
       onPress={() => onPressHandler(page)}
     >
       <View style={[styles.tab, this.props.tabStyle, ]}>
+        <MaterialIcon name={icon} size={16} color='white' style={[{color: textColor, fontWeight, marginRight: 5}, textStyle, ]}/>
         <Text style={[{color: textColor, fontWeight, }, textStyle, ]}>
-          {name}
+          {strings(name)}
         </Text>
       </View>
     </Button>;
@@ -74,9 +78,10 @@ const DefaultTabBar = createReactClass({
     return (
       <View style={[styles.tabs, {backgroundColor: this.props.backgroundColor, }, this.props.style, ]}>
         {this.props.tabs.map((name, page) => {
+          const icon = this.props.icons ? this.props.icons[name] : null;
           const isTabActive = this.props.activeTab === page;
           const renderTab = this.props.renderTab || this.renderTab;
-          return renderTab(name, page, isTabActive, this.props.goToPage);
+          return renderTab(icon, name, page, isTabActive, this.props.goToPage);
         })}
         <Animated.View
           style={[
@@ -97,6 +102,7 @@ const DefaultTabBar = createReactClass({
 const styles = StyleSheet.create({
   tab: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingBottom: 10,
